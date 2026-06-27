@@ -45,7 +45,7 @@ export async function register(req, res){
 
     res.cookie("refreshToken", refreshToken,{
         httpOnly: true,
-        secure: true,
+        secure: false,
         sameSite: "strict",
         maxAge: 7 * 24 * 60 * 1000
     })
@@ -84,7 +84,7 @@ export async function getMe(req, res) {
 }
 
 
-export async function refreshToken(req, res){
+export async function refreshTokenCreated(req, res){
     const refreshToken = req.cookies.refreshToken;
 
     if(!refreshToken){
@@ -102,6 +102,22 @@ export async function refreshToken(req, res){
             expiresIn:"15m"
         }
     )
+
+    const newRefreshToken = jwt.sign({
+        id: decoded.id
+    }, config.JWT_SECRET,
+        {
+            expiresIn:"7d"
+        }
+    )
+
+    res.cookie("refreshToken", newRefreshToken, {
+        httpOnly:true,
+        secure:false,
+        sameSite:"strict",
+        maxAge: 7*24*60*60*1000
+    })
+
     res.status(200).json({
         message:" Access Token refreshed successfully",
         accessToken
