@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 
 .eslintignore
+package.json
+package-lock.json
